@@ -1,30 +1,29 @@
 /* See LICENSE file for copyright and license details. */
 
 /* interval between updates (in ms) */
-const unsigned int interval = 1000;
+const unsigned int interval = 500;
 
 /* text to show if no value can be retrieved */
 static const char unknown_str[] = "n/a";
 
-/* maximum command output length */
-#define CMDLEN 128
+/* maximum output string length */
+#define CMDLEN 2048
 
 /*
  * function            description                     argument (example)
  *
  * battery_perc        battery percentage              battery name (BAT0)
  *                                                     NULL on OpenBSD/FreeBSD
- * battery_remaining   battery remaining HH:MM         battery name (BAT0)
- *                                                     NULL on OpenBSD/FreeBSD
  * battery_state       battery charging state          battery name (BAT0)
  *                                                     NULL on OpenBSD/FreeBSD
- * cat                 read arbitrary file             path
- * cpu_freq            cpu frequency in MHz            NULL
+ * battery_remaining   battery remaining HH:MM         battery name (BAT0)
+ *                                                     NULL on OpenBSD/FreeBSD
  * cpu_perc            cpu usage in percent            NULL
+ * cpu_freq            cpu frequency in MHz            NULL
  * datetime            date and time                   format string (%F %T)
  * disk_free           free disk space in GB           mountpoint path (/)
  * disk_perc           disk usage in percent           mountpoint path (/)
- * disk_total          total disk space in GB          mountpoint path (/)
+ * disk_total          total disk space in GB          mountpoint path (/")
  * disk_used           used disk space in GB           mountpoint path (/)
  * entropy             available entropy               NULL
  * gid                 GID of current user             NULL
@@ -59,14 +58,25 @@ static const char unknown_str[] = "n/a";
  * uptime              system uptime                   NULL
  * username            username of current user        NULL
  * vol_perc            OSS/ALSA volume in percent      mixer file (/dev/mixer)
- *                                                     NULL on OpenBSD/FreeBSD
- * wifi_essid          WiFi ESSID                      interface name (wlan0)
  * wifi_perc           WiFi signal in percent          interface name (wlan0)
+ * wifi_essid          WiFi ESSID                      interface name (wlan0)
  */
+
+static const char vol[] = "amixer sget Master | tail -1 | awk '{print $4}' | tr -d '[]'";
+
+static const char mic[] = "muted=`wpctl get-volume @DEFAULT_AUDIO_SOURCE@ | awk '{print $3;}'`; \
+                            volume=`wpctl get-volume @DEFAULT_AUDIO_SOURCE@ | awk '{print $2;}'`; \
+                            if [ -z ${muted} ]; then \
+                                printf \"${volume}\"; \
+                            else printf \"Off\"; \
+                            fi";
+
 static const struct arg args[] = {
 	/* function format          argument turn signal */
-	{ datetime, "%s",           "%F %T", 1,   -1 },
+    { run_command,          "[%s] | ",          "amixer sget Master | tail -1 | awk '{print $4}' | tr -d '[]'", 1, -1},
+    { battery_perc,         "[%s] | ",          "BAT0", 2, -1},
+    { datetime,             "%s",           "%F %H:%M", 2, -1},
 };
 
 /* maximum output string length */
-#define MAXLEN CMDLEN * LEN(args)
+#define MAXLEN CMDLEN * LEN(args)arg
