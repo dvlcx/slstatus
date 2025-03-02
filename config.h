@@ -74,7 +74,8 @@ static const char mic[] = "muted=`wpctl get-volume @DEFAULT_AUDIO_SOURCE@ | awk 
 static const struct arg args[] = {
 	/* function format          argument turn signal */
     { run_command,          "[%s] | ",          "amixer sget Master | tail -1 | awk '{print $4}' | tr -d '[]'", 1, -1},
-    { battery_perc,         "[%s] | ",          "BAT0", 2, -1},
+    { battery_perc,         "[%s",              "BAT0", 2, -1},
+    { battery_state,        "%s] | ",            "BAT0", 2, -1},
     { datetime,             "%s",           "%F %H:%M", 2, -1},
 };
 
