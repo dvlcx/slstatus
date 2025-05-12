@@ -56,27 +56,27 @@
 		return bprintf("%d", cap_perc);
 	}
 
-	void battery_notify(const char *bat)
+	const char *battery_notify(const char *bat)
 	{
 		int cap_perc;
 		char state[12];
 		char path[PATH_MAX];
 
 		if (esnprintf(path, sizeof(path), POWER_SUPPLY_CAPACITY, bat) < 0 || pscanf(path, "%d", &cap_perc) != 1)
-			return;
+			return NULL;
 
 		if (esnprintf(path, sizeof(path), POWER_SUPPLY_STATUS, bat) < 0 || pscanf(path, "%12[a-zA-Z ]", &state) != 1)
-			return;
+			return NULL;
 
 		if (strcmp("Charging", state) == 0)
 		{
 			last_notified_level = 0;
 
-			return;
+			return NULL;
 		}
 
 		if (strcmp("Discharging", state) != 0)
-			return;
+			return NULL;
 
 		size_t i;
 		const int size = sizeof(*notifiable_levels);
@@ -97,6 +97,8 @@
 				break;
 			}
 		}
+
+		return NULL;
 	}
 
 	const char *
