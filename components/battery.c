@@ -22,7 +22,7 @@
 	#define POWER_SUPPLY_POWER    "/sys/class/power_supply/%s/power_now"
 
 	const char notify_cmd[] = "notify-send -u critical";
-	const char battery_str[] = "Battery";
+	const char battery_str[] = "!LOW BATTERY!";
 	int last_notified_level = 0;
 
 	extern const int notifiable_levels[];
@@ -92,7 +92,7 @@
 			{
 				last_notified_level = notifiable_levels[i];
 
-				snprintf(cmd, 100, "%s %s %d%%", notify_cmd, battery_str, cap_perc);
+				snprintf(cmd, 100, "%s \"%s !%d%%!\"", notify_cmd, battery_str, cap_perc);
 				system(cmd);
 
 				break;
