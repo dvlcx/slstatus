@@ -21,11 +21,12 @@
 	#define POWER_SUPPLY_CURRENT  "/sys/class/power_supply/%s/current_now"
 	#define POWER_SUPPLY_POWER    "/sys/class/power_supply/%s/power_now"
 
-	const char notify_cmd[] = "notify-send";
+	const char notify_cmd[] = "notify-send -u critical";
 	const char battery_str[] = "Battery";
 	int last_notified_level = 0;
 
 	extern const int notifiable_levels[];
+	extern const size_t notifiable_levels_size;
 
 	static const char *
 	pick(const char *bat, const char *f1, const char *f2, char *path,
@@ -68,6 +69,7 @@
 		if (esnprintf(path, sizeof(path), POWER_SUPPLY_STATUS, bat) < 0 || pscanf(path, "%12[a-zA-Z ]", &state) != 1)
 			return NULL;
 
+
 		if (strcmp("Charging", state) == 0)
 		{
 			last_notified_level = 0;
@@ -79,10 +81,9 @@
 			return NULL;
 
 		size_t i;
-		const int size = sizeof(*notifiable_levels);
 		char cmd[28];
 
-		for (i = 0; i < size; i++)
+		for (i = 0; i < notifiable_levels_size; i++)
 		{
 			if (notifiable_levels[i] != cap_perc)
 				continue;
