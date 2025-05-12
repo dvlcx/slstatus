@@ -1,0 +1,10 @@
+--- slstatus.h
++++ slstatus.h
+@@ -2,6 +2,7 @@
+ 
+ /* battery */
+ const char *battery_perc(const char *);
++void battery_notify(const char *);
+ const char *battery_remaining(const char *);
+ const char *battery_state(const char *);
+ 

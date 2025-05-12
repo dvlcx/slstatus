@@ -9,20 +9,11 @@ static const char unknown_str[] = "n/a";
 /* maximum command output length */
 #define CMDLEN 128
 
-/* battery levels to notify - add any levels you want to receive notification for (in percent) */
-const int notifiable_levels[] = {
-    20,
-    10,
-    5,
-};
-
 /*
  * function            description                     argument (example)
  *
  * battery_perc        battery percentage              battery name (BAT0)
  *                                                     NULL on OpenBSD/FreeBSD
- * battery_notify      linux battery notifications     battery name (BAT0)
- *                                                     OpenBSD/FreeBSD not supported
  * battery_remaining   battery remaining HH:MM         battery name (BAT0)
  *                                                     NULL on OpenBSD/FreeBSD
  * battery_state       battery charging state          battery name (BAT0)
