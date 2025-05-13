@@ -79,7 +79,7 @@ const int notifiable_levels[100] = {
 };
 const size_t notifiable_levels_size = sizeof(notifiable_levels)/sizeof(notifiable_levels[0]);
 
-static const char vol[] = "amixer sget Master | tail -1 | awk '{print $4}' | tr -d '[]'";
+static const char vol[] = "a=$(amixer sget Master | tail -1) && [ \"$(echo \"$a\" | awk '{print $6}' | tr -d '[]')\" = \"on\" ] && echo \"$a\" | awk '{print $4}' | tr -d '[%]' || echo 0";
 
 static const char mic[] = "muted=`wpctl get-volume @DEFAULT_AUDIO_SOURCE@ | awk '{print $3;}'`; \
                             volume=`wpctl get-volume @DEFAULT_AUDIO_SOURCE@ | awk '{print $2;}'`; \
