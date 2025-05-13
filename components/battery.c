@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <sys/wait.h>
 
 #include "../slstatus.h"
 #include "../util.h"
@@ -101,6 +102,10 @@
 				if (pid == 0) {
 					execvp((cmds)[0], cmds);
 					_exit(1);
+				}
+				else if (pid > 0)
+				{
+					waitpid(pid, NULL, 0);
 				}
 
 				break;
