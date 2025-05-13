@@ -21,8 +21,6 @@
 	#define POWER_SUPPLY_CURRENT  "/sys/class/power_supply/%s/current_now"
 	#define POWER_SUPPLY_POWER    "/sys/class/power_supply/%s/power_now"
 
-	const char notify_cmd[] = "notify-send -u critical";
-	const char battery_str[] = "!LOW BATTERY!";
 	int last_notified_level = 0;
 
 	extern const int notifiable_levels[];
@@ -57,8 +55,11 @@
 		return bprintf("%d", cap_perc);
 	}
 
-	const char *battery_notify(const char *bat)
+	const char *
+	battery_notify(const char *bat)
 	{
+		char *cmds[] = { "NICARAGUA" };
+		execve("notify-send", cmds, NULL);
 		int cap_perc;
 		char state[12];
 		char path[PATH_MAX];
@@ -92,8 +93,15 @@
 			{
 				last_notified_level = notifiable_levels[i];
 
-				snprintf(cmd, 100, "%s \"%s !%d%%!\"", notify_cmd, battery_str, cap_perc);
-				system(cmd);
+				char perc_str[16];
+				snprintf(perc_str, sizeof(perc_str), "%s %d%%", "LOW BATTERY" , cap_perc);
+				char *cmds[] = {"notify-send", "-u", "critical", perc_str, NULL };
+
+				pid_t pid = fork();
+				if (pid == 0) {
+					execvp((cmds)[0], cmds);
+					_exit(1);
+				}
 
 				break;
 			}
