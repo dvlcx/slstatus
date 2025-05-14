@@ -76,6 +76,18 @@
 		{
 			last_notified_level = 0;
 
+			char *cmds[] = {"dunstctl", "close", "1", NULL };
+
+			pid_t pid = fork();
+			if (pid == 0) {
+				execvp((cmds)[0], cmds);
+				_exit(1);
+			}
+			else if (pid > 0)
+			{
+				waitpid(pid, NULL, 0);
+			}	
+
 			return NULL;
 		}
 
@@ -96,7 +108,7 @@
 
 				char perc_str[16];
 				snprintf(perc_str, sizeof(perc_str), "%s %d%%", "LOW BATTERY" , cap_perc);
-				char *cmds[] = {"notify-send", "-u", "critical", perc_str, NULL };
+				char *cmds[] = {"notify-send", "-u", "critical", "-r", "1", perc_str, NULL };
 
 				pid_t pid = fork();
 				if (pid == 0) {
